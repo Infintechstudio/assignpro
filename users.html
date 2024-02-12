@@ -1,0 +1,129 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+
+    <nav>
+        <div class="logo-container">
+            <img src="logo.png" alt="Kafene Logo" class="logo-img">
+            <span class="company-name">Kafene</span>
+        </div>
+        <div class="nav-links">
+            <a  href="listing.html">Orders</a>
+            <a href="pro.html">Products</a>
+            <a class="activepage" href="users.html">Users</a>
+        </div>
+        <a href="#" class="logout" id="logoutBtn">Logout</a>
+    </nav>
+
+    <div class="maincontent">
+        <h1 class="maincontenth1">Users</h1>
+        <div class="ordercontent1 userscont">
+            <div class="searchbox-container">
+                <input type="text" id="searchInput" placeholder="Search by Name">
+                <button id="resetBtn">Reset</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Profile Pic</th>
+                        <th>Full Name</th>
+                        <th>Date of Birth</th>
+                        <th>Gender</th>
+                        <th>Current City</th>
+                        <th>Current Country</th>
+                    </tr>
+                </thead>
+                <tbody class="tableu">
+                    <!-- Data will be inserted here dynamically using JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Fetch data using jQuery AJAX
+            $.ajax({
+                url: 'https://5fc1a1c9cb4d020016fe6b07.mockapi.io/api/v1/users',
+                method: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    // Iterate through the data and append rows to the table
+                    $.each(data, function (index, user) {
+                        $('.tableu').append(
+                            '<tr>' +
+                            '<td>' + user.id + '</td>' +
+                            '<td><img src="' + user.profilePic + '" alt="Profile Pic" width="50" height="50"></td>' +
+                            '<td>' + user.fullName + '</td>' +
+                            '<td>' + user.dob + '</td>' +
+                            '<td>' + user.gender + '</td>' +
+                            '<td>' + user.currentCity + '</td>' +
+                            '<td>' + user.currentCountry + '</td>' +
+                            '</tr>'
+                        );
+                    });
+
+                    // Search functionality
+                    $('#searchInput').on('input', function () {
+                        var searchText = $(this).val().toLowerCase();
+                      
+                    });
+
+                    // Reset button functionality
+                    $('#resetBtn').on('click', function () {
+                        $('#searchInput').val('');
+                        filterTable('');
+                    });
+
+                    // Handle Enter key press
+                    $('#searchInput').on('keypress', function (e) {
+                        if (e.which === 13) { // 13 is the key code for Enter
+                            var searchText = $(this).val().trim().toLowerCase();
+                            if (searchText.length >= 3) {
+                                filterTable(searchText);
+                            } else {
+                                alert("Please enter at least 3 characters");
+                            }
+                        }
+                    });
+
+                    function filterTable(searchText) {
+                        $('.tableu tr').each(function () {
+                            var fullName = $(this).find('td:nth-child(3)').text().toLowerCase();
+                            if (fullName.includes(searchText)) {
+                                $(this).show();
+                            } else {
+                                $(this).hide();
+                            }
+                        });
+                    }
+                    $('#logoutBtn').on('click', function () {
+                        // Clear any session data or perform other logout actions
+                        // Redirect to the index.html page
+                        window.location.href = 'index.html';
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
